@@ -1,7 +1,9 @@
 /node_modules
 /public/hot
+/public/js/chunks
 /public/storage
 /storage/*.key
+/storage/*.index
 /vendor
 .env
 .env.backup

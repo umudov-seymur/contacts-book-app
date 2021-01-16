@@ -18,13 +18,19 @@ class ContactController extends Controller
     {
         $this->authorize('viewAny', Contact::class);
 
-        return ContactResource::collection(request()->user()->contacts);
+        return ContactResource::collection(
+            request()
+                ->user()
+                ->contacts()
+                ->orderBy('id', 'desc')
+                ->get()
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(ContactRequest $request)
@@ -32,18 +38,18 @@ class ContactController extends Controller
         $this->authorize('create', Contact::class);
 
         $contact = $request->user()
-                ->contacts()
-                ->create($request->validated());
+            ->contacts()
+            ->create($request->validated());
 
         return (new ContactResource($contact))
-                ->response()
-                ->setStatusCode(Response::HTTP_CREATED);
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Contact  $contact
+     * @param \App\Models\Contact $contact
      * @return \Illuminate\Http\Response
      */
     public function show(Contact $contact)
@@ -56,8 +62,8 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Contact  $contact
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Contact $contact
      * @return \Illuminate\Http\Response
      */
     public function update(ContactRequest $request, Contact $contact)
@@ -67,14 +73,14 @@ class ContactController extends Controller
         $contact->update($request->validated());
 
         return (new ContactResource($contact))
-                ->response()
-                ->setStatusCode(Response::HTTP_OK);
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Contact  $contact
+     * @param \App\Models\Contact $contact
      * @return \Illuminate\Http\Response
      */
     public function destroy(Contact $contact)

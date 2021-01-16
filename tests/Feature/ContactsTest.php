@@ -15,12 +15,6 @@ class ContactsTest extends TestCase
 
     protected $user;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->user = User::factory()->create();
-    }
-
     public function test_an_unauthenticated_user_should_redirected_to_login()
     {
         $response = $this->post('/api/contacts', $this->data('api_token'));
@@ -29,9 +23,26 @@ class ContactsTest extends TestCase
         $this->assertCount(0, Contact::all());
     }
 
+    public function data($key = null)
+    {
+        $data = [
+            'name' => 'Test Name',
+            'email' => 'example@email.com',
+            'birthday' => '05/14/1988',
+            'company' => 'ABC String',
+            'api_token' => $this->user->api_token
+        ];
+
+        if (!is_null($key)) {
+            $data[$key] = '';
+        }
+
+        return $data;
+    }
+
     public function test_an_authenticated_user_can_add_a_contact()
     {
-        // $this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
 
         $response = $this->post('/api/contacts', $this->data());
 
@@ -40,9 +51,10 @@ class ContactsTest extends TestCase
         // dd($response->getContent());
 
         $this->assertEquals('Test Name', $contact->name);
-        $this->assertEquals('example@example.com', $contact->email);
+        $this->assertEquals('example@email.com', $contact->email);
         $this->assertEquals('05-14-1988', $contact->birthday->format('m-d-Y'));
         $this->assertEquals('ABC String', $contact->company);
+
         $response->assertStatus(Response::HTTP_CREATED);
         $response->assertJson([
             'data' => [
@@ -151,7 +163,7 @@ class ContactsTest extends TestCase
         $contact = $contact->fresh();
 
         $this->assertEquals('Test Name', $contact->name);
-        $this->assertEquals('example@example.com', $contact->email);
+        $this->assertEquals('example@email.com', $contact->email);
         $this->assertEquals('05/14/1988', $contact->birthday->format('m/d/Y'));
         $this->assertEquals('ABC String', $contact->company);
 
@@ -214,20 +226,9 @@ class ContactsTest extends TestCase
         $response->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
-    public function data($key = null)
+    protected function setUp(): void
     {
-        $data = [
-            'name' => 'Test Name',
-            'email' => 'example@example.com',
-            'birthday' => '05/14/1988',
-            'company' => 'ABC String',
-            'api_token' => $this->user->api_token
-        ];
-
-        if (!is_null($key)) {
-            $data[$key] = '';
-        }
-
-        return $data;
+        parent::setUp();
+        $this->user = User::factory()->create();
     }
 }

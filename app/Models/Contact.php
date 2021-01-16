@@ -5,10 +5,11 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Contact extends Model
 {
-    use HasFactory;
+    use HasFactory,Searchable;
 
     protected $guarded = [];
     protected $dates = ['birthday'];
@@ -25,6 +26,11 @@ class Contact extends Model
 
     public function path()
     {
-        return url('/contacts/'.$this->id);
+        return url('/contacts/' . $this->id);
+    }
+
+    public function scopeBirthdays($query)
+    {
+        return $query->whereRaw('birthday like "%-' . now()->format('m') . '-%"');
     }
 }
