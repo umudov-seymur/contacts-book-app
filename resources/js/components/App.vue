@@ -50,16 +50,8 @@ export default {
       return window.user_data;
     },
   },
-  methods: {
-    setToken() {
-      window.axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${this.user.api_token}`;
-    },
-  },
   watch: {
     $route(to, from) {
-      this.setToken();
       this.title = to.meta.title;
     },
 
